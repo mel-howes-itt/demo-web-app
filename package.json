@@ -1,0 +1,12 @@
+{
+  "name": "mels_web_app",
+  "version": "1.0.0",
+  "description": "Node.js Web Front End for Docker",
+  "main": "mels-web-ui.js",
+  "scripts": {
+    "start": "node mels-web-ui.js"
+  },
+  "dependencies": {
+    "request": "^2.81.0"
+  }
+}

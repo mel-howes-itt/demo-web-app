@@ -1,0 +1,7 @@
+{
+	"development": {
+        "config_id": "development",
+        "app_name": "mels_web_app",
+		"exposedPort": "80"
+	}
+}

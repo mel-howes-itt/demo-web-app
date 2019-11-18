@@ -1,0 +1,49 @@
+pool:
+  name: Hosted Ubuntu 1604
+
+variables:
+  imageName: 'nodejs-server'
+  version: '1.$(build.buildId)'
+
+steps:
+- task: Docker@1
+  displayName: 'Docker build'
+  inputs:
+    azureSubscriptionEndpoint: 'Azure for Students (b88fd07c-cd3e-4627-915e-cc963655b16b)'
+    azureContainerRegistry: eadeployacr.azurecr.io
+    imageName: '$(imageName):$(version)'
+
+- task: Docker@1
+  displayName: 'Docker push'
+  inputs:
+    azureSubscriptionEndpoint: 'Azure for Students (b88fd07c-cd3e-4627-915e-cc963655b16b)'
+    azureContainerRegistry: eadeployacr.azurecr.io
+    command: 'Push an image'
+    imageName: '$(imageName):$(version)'
+
+- script: 'sed -i s/nodejs-server:latest/$(imageName):$(version)/g create-nodejs-service-manifest.yaml'
+  displayName: 'Command Line Script'
+
+- script: 'sed -i s/nodejs-server:latest/$(imageName):$(version)/g create-nodejs-service-manifest-rolling.yaml'
+  displayName: 'Command Line Script'
+
+- script: 'sed -i s/nodejs-server:latest/$(imageName):$(version)/g create-nodejs-service-manifest-canary.yaml'
+  displayName: 'Command Line Script'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: YAML'
+  inputs:
+    PathtoPublish: 'create-nodejs-service-manifest.yaml'
+    ArtifactName: YAML
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: YAML'
+  inputs:
+    PathtoPublish: 'create-nodejs-service-manifest-rolling.yaml'
+    ArtifactName: YAML-ROLLING
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: YAML'
+  inputs:
+    PathtoPublish: 'create-nodejs-service-manifest-canary.yaml'
+    ArtifactName: YAML-CANARY
